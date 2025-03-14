@@ -55,5 +55,13 @@ app.get('/movies', (c) => {
 });
 
 
+app.delete('/movies/:id', (c) => {
+  const id = c.req.param('id')
+  if (!movies[id]) return c.json({ error: 'Movie not found' }, 404)
+  delete movies[id]
+  return c.json({ message: 'Movie deleted successfully' })
+})
+
+
 serve(app);
 console.log(`Server is running on http://localhost:${3000}`)

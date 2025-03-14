@@ -31,6 +31,24 @@ app.post('/movies', validator('json', (value) => {
   return c.json({ message: 'Movie added successfully' }, 201)
 })
 
+app.patch('/movies/:id', async (c) => {
+  const id = c.req.param('id')
+  if (!movies[id]) return c.json({ error: 'Movie not found' }, 404)
+
+  const body = await c.req.json()
+  if ('rating' in body && (typeof body.rating !== 'number' || body.rating < 1 || body.rating > 5)) {
+    return c.json({ error: 'Rating must be between 1 and 5' }, 400)
+  }
+
+  movies[id] = { ...movies[id], ...body }
+
+  return c.json({ message: 'Movie updated successfully' })
+})
+app.get('/movies/:id', (c) => {
+  const id = c.req.param('id')
+  return movies[id] ? c.json(movies[id]) : c.json({ error: 'Movie not found' }, 404)
+})
+
 
 serve(app);
 console.log(`Server is running on http://localhost:${3000}`)

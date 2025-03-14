@@ -125,6 +125,15 @@ app.get('/movies/genre/:genre', (c) => {
   return filtered.length ? c.json(filtered) : c.json({ error: 'No movies found' }, 404)
 })
 
+// Get movies using director
+
+app.get('/movies/director/:director', (c) => {
+  const director = c.req.param('director')
+  const filtered = Object.values(movies).filter(m => m.director.toLowerCase() === director.toLowerCase())
+  return filtered.length ? c.json(filtered) : c.json({ error: 'No movies found' }, 404)
+})
+
+
 
 serve(app);
 console.log(`Server is running on http://localhost:${3000}`)

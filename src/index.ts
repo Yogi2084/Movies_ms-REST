@@ -17,6 +17,8 @@ type Movie = {
 
 const movies: Record<string, Movie> = {}
 
+// Add a movie
+
 app.post('/movies', validator('json', (value) => {
   if (!value.id || !value.title || !value.director || typeof value.releaseYear !== 'number' || !value.genre) {
     throw new Error('Invalid movie data')
@@ -31,6 +33,8 @@ app.post('/movies', validator('json', (value) => {
   return c.json({ message: 'Movie added successfully' }, 201)
 })
 
+// Update a movie
+
 app.patch('/movies/:id', async (c) => {
   const id = c.req.param('id')
   if (!movies[id]) return c.json({ error: 'Movie not found' }, 404)
@@ -44,11 +48,14 @@ app.patch('/movies/:id', async (c) => {
 
   return c.json({ message: 'Movie updated successfully' })
 })
+
+// Get a movie using  ID
 app.get('/movies/:id', (c) => {
   const id = c.req.param('id')
   return movies[id] ? c.json(movies[id]) : c.json({ error: 'Movie not found' }, 404)
 })
 
+// Get all movies
 
 app.get('/movies', (c) => {
   return c.json(Object.values(movies))
@@ -78,6 +85,18 @@ app.post('/movies/:id/rating', async (c) => {
   return c.json({ message: 'Rating added successfully' })
 })
 
+// Get the average rating of a movie
+
+app.get('/movies/:id/rating', (c) => {
+  const id = c.req.param('id')
+  if (!movies[id]) return c.json({ error: 'Movie not found' }, 404)
+
+  const ratings = movies[id].ratings
+  if (ratings.length === 0) return c.body(null, 204) // Fix here
+
+  const avgRating = ratings.reduce((a, b) => a + b, 0) / ratings.length
+  return c.json({ averageRating: avgRating })
+})
 
 serve(app);
 console.log(`Server is running on http://localhost:${3000}`)

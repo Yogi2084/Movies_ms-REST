@@ -33,6 +33,16 @@ app.post('/movies', validator('json', (value) => {
   return c.json({ message: 'Movie added successfully' }, 201)
 })
 
+// Search for a movie
+
+app.get('/movies/search', (c) => {
+  const keyword = c.req.query('keyword')?.toLowerCase() || ''
+  const filtered = Object.values(movies).filter(m => m.title.toLowerCase().includes(keyword))
+  return filtered.length ? c.json(filtered) : c.json({ error: 'No movies found' }, 404)
+})
+
+
+
 // Update a movie
 
 app.patch('/movies/:id', async (c) => {

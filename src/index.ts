@@ -50,5 +50,10 @@ app.get('/movies/:id', (c) => {
 })
 
 
+app.get('/movies', (c) => {
+  return c.json(Object.values(movies))
+});
+
+
 serve(app);
 console.log(`Server is running on http://localhost:${3000}`)

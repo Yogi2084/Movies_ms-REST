@@ -54,12 +54,28 @@ app.get('/movies', (c) => {
   return c.json(Object.values(movies))
 });
 
+// Delete a movie
 
 app.delete('/movies/:id', (c) => {
   const id = c.req.param('id')
   if (!movies[id]) return c.json({ error: 'Movie not found' }, 404)
   delete movies[id]
   return c.json({ message: 'Movie deleted successfully' })
+})
+
+// Add a rating to a movie
+
+app.post('/movies/:id/rating', async (c) => {
+  const id = c.req.param('id')
+  if (!movies[id]) return c.json({ error: 'Movie not found' }, 404)
+
+  const { rating } = await c.req.json()
+  if (typeof rating !== 'number' || rating < 1 || rating > 5) {
+    return c.json({ error: 'Rating must be between 1 and 5' }, 400)
+  }
+
+  movies[id].ratings.push(rating)
+  return c.json({ message: 'Rating added successfully' })
 })
 
 

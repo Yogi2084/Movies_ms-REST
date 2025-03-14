@@ -49,6 +49,23 @@ app.patch('/movies/:id', async (c) => {
   return c.json({ message: 'Movie updated successfully' })
 })
 
+// Get top rated movie
+
+app.get('/movies/top-rated', (c) => {
+  const ratedMovies = Object.values(movies).filter(m => m.ratings.length > 0)
+  if (ratedMovies.length === 0) return c.json({ error: 'No movies found' }, 404)
+
+  const topMovie = ratedMovies.reduce((prev, curr) => {
+    const prevAvg = prev.ratings.reduce((sum, r) => sum + r, 0) / prev.ratings.length
+    const currAvg = curr.ratings.reduce((sum, r) => sum + r, 0) / curr.ratings.length
+    return currAvg > prevAvg ? curr : prev
+  })
+
+  const averageRating = topMovie.ratings.reduce((sum, r) => sum + r, 0) / topMovie.ratings.length
+  return c.json({ ...topMovie, averageRating })
+})
+
+
 // Get a movie using  ID
 app.get('/movies/:id', (c) => {
   const id = c.req.param('id')
@@ -60,6 +77,8 @@ app.get('/movies/:id', (c) => {
 app.get('/movies', (c) => {
   return c.json(Object.values(movies))
 });
+
+
 
 // Delete a movie
 

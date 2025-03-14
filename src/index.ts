@@ -117,5 +117,14 @@ app.get('/movies/:id/rating', (c) => {
   return c.json({ averageRating: avgRating })
 })
 
+// Get movies by genre
+
+app.get('/movies/genre/:genre', (c) => {
+  const genre = c.req.param('genre')
+  const filtered = Object.values(movies).filter(m => m.genre.toLowerCase() === genre.toLowerCase())
+  return filtered.length ? c.json(filtered) : c.json({ error: 'No movies found' }, 404)
+})
+
+
 serve(app);
 console.log(`Server is running on http://localhost:${3000}`)
